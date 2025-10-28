@@ -1,3 +1,10 @@
 {
-  "placeholderImages": []
+  "placeholderImages": [
+    {
+      "id": "product-placeholder",
+      "description": "A placeholder graphic for the product image uploader.",
+      "imageUrl": "https://images.unsplash.com/photo-1661880991107-d6216087b17e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxMHx8YWJzdHJhY3QlMjBpbGx1c3RyYXRpb258ZW58MHx8fHwxNzYxNjQ0NjgzfDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "abstract illustration"
+    }
+  ]
 }
