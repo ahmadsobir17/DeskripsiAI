@@ -20,12 +20,12 @@ const GenerateProductDescriptionFromImageInputSchema = z.object({
     .string()
     .optional()
     .describe('A custom prompt to guide the product description generation.'),
-  language: z.string().describe('The target language for the product description.'),
+  targetMarket: z.string().describe('The target market for the product description.'),
 });
 export type GenerateProductDescriptionFromImageInput = z.infer<typeof GenerateProductDescriptionFromImageInputSchema>;
 
 const GenerateProductDescriptionFromImageOutputSchema = z.object({
-  productDescription: z.string().describe('The generated product description in the target language.'),
+  productDescription: z.string().describe('The generated product description in Indonesian.'),
 });
 export type GenerateProductDescriptionFromImageOutput = z.infer<typeof GenerateProductDescriptionFromImageOutputSchema>;
 
@@ -37,7 +37,13 @@ const prompt = ai.definePrompt({
   name: 'generateProductDescriptionFromImagePrompt',
   input: {schema: GenerateProductDescriptionFromImageInputSchema},
   output: {schema: GenerateProductDescriptionFromImageOutputSchema},
-  prompt: `You are an expert marketer specializing in creating compelling product descriptions. Generate a compelling product description in '{{{language}}}' based on the provided product image. Emphasize the key features and benefits of the product to attract potential buyers.
+  prompt: `You are an expert marketer specializing in creating compelling product descriptions in Indonesian. Your task is to generate a product description for the given image, tailored to the specified target market.
+
+Target Market: {{{targetMarket}}}
+
+- If the target market is 'Gen Z', use a casual, trendy, and social media-friendly tone. Use slang and emojis where appropriate.
+- If the target market is 'Young Professionals', use a sophisticated, polished, and benefits-oriented tone. Highlight quality, efficiency, and how the product can enhance their lifestyle.
+- If the target market is 'Families', use a warm, trustworthy, and practical tone. Emphasize safety, durability, and how the product can benefit the entire family.
 
 {{#if customPrompt}}
 Follow these additional instructions: {{{customPrompt}}}
@@ -45,7 +51,7 @@ Follow these additional instructions: {{{customPrompt}}}
 
 Product Image: {{media url=photoDataUri}}
 
-Product Description:`,
+Product Description (in Indonesian):`,
 });
 
 const generateProductDescriptionFromImageFlow = ai.defineFlow(

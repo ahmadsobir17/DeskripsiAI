@@ -2,7 +2,7 @@
 
 import { useState, useRef } from 'react';
 import Image from 'next/image';
-import { UploadCloud, Copy, Loader2, X, Pilcrow, Languages } from 'lucide-react';
+import { UploadCloud, Copy, Loader2, X, Pilcrow, Users } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -11,13 +11,13 @@ import { generateContent } from './actions';
 import { cn } from '@/lib/utils';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 
-type Language = 'Indonesian' | 'English' | 'Javanese';
+type TargetMarket = 'Gen Z' | 'Young Professionals' | 'Families';
 
 export default function Home() {
   const [imageDataUrl, setImageDataUrl] = useState<string | null>(null);
   const [imagePreviewUrl, setImagePreviewUrl] = useState<string | null>(null);
   const [customPrompt, setCustomPrompt] = useState<string>('');
-  const [language, setLanguage] = useState<Language>('Indonesian');
+  const [targetMarket, setTargetMarket] = useState<TargetMarket>('Gen Z');
   const [analysis, setAnalysis] = useState<string>('');
   const [description, setDescription] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -79,7 +79,7 @@ export default function Home() {
     setAnalysis('');
     setDescription('');
     
-    const result = await generateContent(imageDataUrl, customPrompt, language);
+    const result = await generateContent(imageDataUrl, customPrompt, targetMarket);
 
     if (result.error) {
       setError(result.error);
@@ -132,7 +132,7 @@ export default function Home() {
           Hasilkan Deskripsi Produk dengan AI
         </h1>
         <p className="mt-4 text-lg text-muted-foreground">
-          Unggah gambar produk Anda untuk membuat deskripsi yang menarik secara instan dalam berbagai bahasa.
+          Unggah gambar produk Anda untuk membuat deskripsi yang menarik secara instan untuk target pasar Anda.
         </p>
       </div>
 
@@ -221,21 +221,21 @@ export default function Home() {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <Languages className="w-5 h-5" />
-                Pilih Bahasa
+                <Users className="w-5 h-5" />
+                Pilih Target Pasar
               </CardTitle>
               <CardDescription>
-                Pilih bahasa target untuk deskripsi produk Anda.
+                Pilih audiens target untuk deskripsi produk Anda.
               </CardDescription>
             </CardHeader>
             <CardContent className="flex flex-wrap gap-2">
-              {(['Indonesian', 'English', 'Javanese'] as Language[]).map((lang) => (
+              {(['Gen Z', 'Young Professionals', 'Families'] as TargetMarket[]).map((market) => (
                 <Button
-                  key={lang}
-                  variant={language === lang ? 'default' : 'outline'}
-                  onClick={() => setLanguage(lang)}
+                  key={market}
+                  variant={targetMarket === market ? 'default' : 'outline'}
+                  onClick={() => setTargetMarket(market)}
                 >
-                  {lang}
+                  {market}
                 </Button>
               ))}
             </CardContent>
@@ -305,7 +305,7 @@ export default function Home() {
                     {description && (
                     <Card className="animate-in fade-in-0 slide-in-from-bottom-5 duration-700">
                         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-xl font-headline">Deskripsi Produk ({language})</CardTitle>
+                        <CardTitle className="text-xl font-headline">Deskripsi Produk ({targetMarket})</CardTitle>
                         <Button variant="ghost" size="icon" onClick={() => handleCopy(description, 'Deskripsi')}>
                             <Copy className="w-4 h-4" />
                             <span className="sr-only">Salin Deskripsi</span>
