@@ -46,7 +46,7 @@ const prompt = ai.definePrompt({
 - Ensure correct use of punctuation, including commas and periods.
 - The final output should be clean, well-organized, and easy to read.
 
-**Description Length:** Generate a {{length | default: 'Medium'}}-length description.
+**Description Length:** Generate a {{#if length}}{{length}}{{else}}Medium{{/if}}-length description.
 
 **Target Market:** {{{targetMarket}}}
 
@@ -76,5 +76,3 @@ const generateProductDescriptionFromImageFlow = ai.defineFlow(
     return output!;
   }
 );
-
-    
