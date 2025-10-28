@@ -21,6 +21,7 @@ const GenerateProductDescriptionFromImageInputSchema = z.object({
     .optional()
     .describe('A custom prompt to guide the product description generation.'),
   targetMarket: z.string().describe('The target market for the product description.'),
+  length: z.enum(['Short', 'Medium', 'Long']).optional().describe('The desired length of the product description.'),
 });
 export type GenerateProductDescriptionFromImageInput = z.infer<typeof GenerateProductDescriptionFromImageInputSchema>;
 
@@ -44,6 +45,8 @@ const prompt = ai.definePrompt({
 - Use bullet points (with a hyphen, e.g., - Point 1) to highlight key features or benefits.
 - Ensure correct use of punctuation, including commas and periods.
 - The final output should be clean, well-organized, and easy to read.
+
+**Description Length:** Generate a {{length | default: 'Medium'}}-length description.
 
 **Target Market:** {{{targetMarket}}}
 
@@ -73,3 +76,5 @@ const generateProductDescriptionFromImageFlow = ai.defineFlow(
     return output!;
   }
 );
+
+    

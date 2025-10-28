@@ -12,6 +12,11 @@
   "targetMarketDescription": "Choose the target audience for your product description.",
   "youngProfessionals": "Young Professionals",
   "families": "Families",
+  "descriptionLengthTitle": "Description Length",
+  "descriptionLengthDescription": "Choose the desired length for your product description.",
+  "short": "Short",
+  "medium": "Medium",
+  "long": "Long",
   "generateButton": "Generate Description",
   "generatingButton": "Generating",
   "imageAnalysisTitle": "Image Analysis",
@@ -28,3 +33,5 @@
   "copyFailedTitle": "Copy Failed",
   "copyFailedDescription": "Could not copy text to clipboard."
 }
+
+    

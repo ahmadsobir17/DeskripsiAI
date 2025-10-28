@@ -12,6 +12,11 @@
   "targetMarketDescription": "Pilih audiens target untuk deskripsi produk Anda.",
   "youngProfessionals": "Profesional Muda",
   "families": "Keluarga",
+  "descriptionLengthTitle": "Panjang Deskripsi",
+  "descriptionLengthDescription": "Pilih panjang yang diinginkan untuk deskripsi produk Anda.",
+  "short": "Pendek",
+  "medium": "Sedang",
+  "long": "Panjang",
   "generateButton": "Hasilkan Deskripsi",
   "generatingButton": "Menghasilkan",
   "imageAnalysisTitle": "Analisis Gambar",
@@ -28,3 +33,5 @@
   "copyFailedTitle": "Gagal menyalin",
   "copyFailedDescription": "Tidak dapat menyalin teks ke clipboard."
 }
+
+    

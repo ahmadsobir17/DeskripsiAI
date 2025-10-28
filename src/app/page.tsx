@@ -2,10 +2,12 @@
 
 import { useState, useRef } from 'react';
 import Image from 'next/image';
-import { UploadCloud, Copy, Loader2, X, Pilcrow, Users } from 'lucide-react';
+import { UploadCloud, Copy, Loader2, X, Pilcrow, Users, TextQuote } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Slider } from '@/components/ui/slider';
+import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { generateContent } from './actions';
 import { cn } from '@/lib/utils';
@@ -13,13 +15,27 @@ import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { useLanguage } from '@/context/language-context';
 
 type TargetMarket = 'Gen Z' | 'Young Professionals' | 'Families';
+type DescriptionLength = 'Short' | 'Medium' | 'Long';
+
+const lengthMap: Record<number, DescriptionLength> = {
+  1: 'Short',
+  2: 'Medium',
+  3: 'Long',
+};
+
+const lengthTranslationMap: Record<DescriptionLength, { en: string; id: string }> = {
+  'Short': { en: 'Short', id: 'Pendek' },
+  'Medium': { en: 'Medium', id: 'Sedang' },
+  'Long': { en: 'Long', id: 'Panjang' },
+};
 
 export default function Home() {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const [imageDataUrl, setImageDataUrl] = useState<string | null>(null);
   const [imagePreviewUrl, setImagePreviewUrl] = useState<string | null>(null);
   const [customPrompt, setCustomPrompt] = useState<string>('');
   const [targetMarket, setTargetMarket] = useState<TargetMarket>('Gen Z');
+  const [descriptionLength, setDescriptionLength] = useState<DescriptionLength>('Medium');
   const [analysis, setAnalysis] = useState<string>('');
   const [description, setDescription] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -81,7 +97,7 @@ export default function Home() {
     setAnalysis('');
     setDescription('');
     
-    const result = await generateContent(imageDataUrl, customPrompt, targetMarket);
+    const result = await generateContent(imageDataUrl, customPrompt, targetMarket, descriptionLength);
 
     if (result.error) {
       setError(result.error);
@@ -124,6 +140,13 @@ export default function Home() {
     setError(null);
     if (fileInputRef.current) {
         fileInputRef.current.value = '';
+    }
+  };
+
+  const handleSliderChange = (value: number[]) => {
+    const length = lengthMap[value[0] as keyof typeof lengthMap];
+    if (length) {
+      setDescriptionLength(length);
     }
   };
 
@@ -245,6 +268,32 @@ export default function Home() {
               ))}
             </CardContent>
           </Card>
+          
+          <Card>
+              <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                      <TextQuote className="w-5 h-5" />
+                      {t('descriptionLengthTitle')}
+                  </CardTitle>
+                  <CardDescription>{t('descriptionLengthDescription')}</CardDescription>
+              </CardHeader>
+              <CardContent>
+                  <div className='flex flex-col gap-2'>
+                    <div className="flex justify-between text-sm text-muted-foreground">
+                        <span>{t('short')}</span>
+                        <span>{t('medium')}</span>
+                        <span>{t('long')}</span>
+                    </div>
+                    <Slider
+                      defaultValue={[2]}
+                      min={1}
+                      max={3}
+                      step={1}
+                      onValueChange={handleSliderChange}
+                    />
+                  </div>
+              </CardContent>
+          </Card>
 
 
           {error && !isLoading && <p className="text-center text-destructive">{error}</p>}
@@ -343,3 +392,5 @@ export default function Home() {
     </div>
   );
 }
+
+    
