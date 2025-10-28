@@ -1,5 +1,6 @@
 import { ThemeToggle } from '@/components/theme-toggle';
 import { Bot } from 'lucide-react';
+import { LanguageToggle } from './language-toggle';
 
 export default function SiteHeader() {
   return (
@@ -9,8 +10,9 @@ export default function SiteHeader() {
           <Bot className="h-6 w-6 mr-2 text-primary" />
           <a href="/" className="font-bold font-headline">DeskripsiAI</a>
         </div>
-        <div className="flex flex-1 items-center justify-end space-x-4">
+        <div className="flex flex-1 items-center justify-end space-x-2">
           <nav className="flex items-center space-x-1">
+            <LanguageToggle />
             <ThemeToggle />
           </nav>
         </div>
