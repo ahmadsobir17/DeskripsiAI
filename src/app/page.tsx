@@ -10,10 +10,12 @@ import { useToast } from '@/hooks/use-toast';
 import { generateContent } from './actions';
 import { cn } from '@/lib/utils';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
+import { useLanguage } from '@/context/language-context';
 
 type TargetMarket = 'Gen Z' | 'Young Professionals' | 'Families';
 
 export default function Home() {
+  const { t } = useLanguage();
   const [imageDataUrl, setImageDataUrl] = useState<string | null>(null);
   const [imagePreviewUrl, setImagePreviewUrl] = useState<string | null>(null);
   const [customPrompt, setCustomPrompt] = useState<string>('');
@@ -41,10 +43,10 @@ export default function Home() {
       };
       reader.readAsDataURL(file);
     } else {
-      setError('Silakan pilih file gambar yang valid.');
+      setError(t('invalidFileError'));
       toast({
-        title: "File tidak valid",
-        description: "Silakan pilih file gambar yang valid.",
+        title: t('invalidFileTitle'),
+        description: t('invalidFileError'),
         variant: "destructive",
       });
     }
@@ -71,7 +73,7 @@ export default function Home() {
 
   const handleGenerate = async () => {
     if (!imageDataUrl) {
-      setError('Silakan unggah gambar terlebih dahulu.');
+      setError(t('uploadFirstError'));
       return;
     }
     setIsLoading(true);
@@ -98,14 +100,14 @@ export default function Home() {
   const handleCopy = (text: string, field: string) => {
     navigator.clipboard.writeText(text).then(() => {
       toast({
-        title: 'Disalin!',
-        description: `${field} telah disalin ke clipboard.`,
+        title: t('copiedTitle'),
+        description: `${field} ${t('copiedDescription')}`,
       });
     }).catch(err => {
       console.error('Failed to copy: ', err);
       toast({
-        title: 'Gagal menyalin',
-        description: 'Tidak dapat menyalin teks ke clipboard.',
+        title: t('copyFailedTitle'),
+        description: t('copyFailedDescription'),
         variant: 'destructive',
       });
     });
@@ -125,14 +127,20 @@ export default function Home() {
     }
   };
 
+  const targetMarketTranslations: Record<TargetMarket, string> = {
+    'Gen Z': 'Gen Z',
+    'Young Professionals': t('youngProfessionals'),
+    'Families': t('families')
+  }
+
   return (
     <div className="container mx-auto px-4 py-8 md:py-12">
       <div className="max-w-3xl mx-auto text-center">
         <h1 className="text-3xl md:text-5xl font-bold font-headline tracking-tight">
-          Hasilkan Deskripsi Produk dengan AI
+          {t('pageTitle')}
         </h1>
         <p className="mt-4 text-lg text-muted-foreground">
-          Unggah gambar produk Anda untuk membuat deskripsi yang menarik secara instan untuk target pasar Anda.
+          {t('pageDescription')}
         </p>
       </div>
 
@@ -141,7 +149,7 @@ export default function Home() {
         <div className="flex flex-col gap-6">
           <Card className="overflow-hidden shadow-lg">
             <CardHeader>
-                <CardTitle>Unggah Gambar Produk</CardTitle>
+                <CardTitle>{t('uploadCardTitle')}</CardTitle>
             </CardHeader>
             <CardContent>
               {!imagePreviewUrl ? (
@@ -162,10 +170,7 @@ export default function Home() {
                   )}
                   <div className="relative z-10 flex flex-col items-center text-center">
                     <UploadCloud className="w-12 h-12 text-muted-foreground" />
-                    <p className="mt-4 text-muted-foreground">
-                      Seret & letakkan gambar di sini, atau <br />
-                      <span className="font-semibold text-primary">klik untuk memilih file</span>
-                    </p>
+                    <p className="mt-4 text-muted-foreground" dangerouslySetInnerHTML={{ __html: t('dragAndDrop')}} />
                   </div>
                   <input
                     ref={fileInputRef}
@@ -179,7 +184,7 @@ export default function Home() {
                 <div className="relative group">
                   <Image
                     src={imagePreviewUrl}
-                    alt="Pratinjau produk"
+                    alt={t('productPreviewAlt')}
                     width={600}
                     height={400}
                     className="w-full h-auto object-contain rounded-lg max-h-[50vh]"
@@ -191,7 +196,7 @@ export default function Home() {
                       onClick={removeImage}
                   >
                       <X className="w-4 h-4" />
-                      <span className="sr-only">Hapus gambar</span>
+                      <span className="sr-only">{t('removeImage')}</span>
                   </Button>
                 </div>
               )}
@@ -202,17 +207,17 @@ export default function Home() {
             <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                     <Pilcrow className="w-5 h-5" />
-                    Prompt Kustom (Opsional)
+                    {t('customPromptTitle')}
                 </CardTitle>
                 <CardDescription>
-                Berikan instruksi spesifik untuk menyesuaikan deskripsi produk yang dihasilkan.
+                    {t('customPromptDescription')}
                 </CardDescription>
             </CardHeader>
             <CardContent>
                 <Textarea 
                     value={customPrompt}
                     onChange={(e) => setCustomPrompt(e.target.value)}
-                    placeholder="Contoh: Fokus pada bahan yang ramah lingkungan dan sebutkan bahwa produk ini buatan tangan."
+                    placeholder={t('customPromptPlaceholder')}
                     className="h-24"
                 />
             </CardContent>
@@ -222,10 +227,10 @@ export default function Home() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Users className="w-5 h-5" />
-                Pilih Target Pasar
+                {t('targetMarketTitle')}
               </CardTitle>
               <CardDescription>
-                Pilih audiens target untuk deskripsi produk Anda.
+                {t('targetMarketDescription')}
               </CardDescription>
             </CardHeader>
             <CardContent className="flex flex-wrap gap-2">
@@ -235,7 +240,7 @@ export default function Home() {
                   variant={targetMarket === market ? 'default' : 'outline'}
                   onClick={() => setTargetMarket(market)}
                 >
-                  {market}
+                  {targetMarketTranslations[market]}
                 </Button>
               ))}
             </CardContent>
@@ -248,10 +253,10 @@ export default function Home() {
             {isLoading ? (
               <>
                 <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                Menghasilkan...
+                {t('generatingButton')}...
               </>
             ) : (
-              'Hasilkan Deskripsi'
+              t('generateButton')
             )}
           </Button>
         </div>
@@ -286,10 +291,10 @@ export default function Home() {
                     {analysis && (
                     <Card className="animate-in fade-in-0 slide-in-from-bottom-5 duration-500">
                         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-xl font-headline">Analisis Gambar</CardTitle>
-                        <Button variant="ghost" size="icon" onClick={() => handleCopy(analysis, 'Analisis')}>
+                        <CardTitle className="text-xl font-headline">{t('imageAnalysisTitle')}</CardTitle>
+                        <Button variant="ghost" size="icon" onClick={() => handleCopy(analysis, t('imageAnalysisTitle'))}>
                             <Copy className="w-4 h-4" />
-                            <span className="sr-only">Salin Analisis</span>
+                            <span className="sr-only">{t('copyAnalysis')}</span>
                         </Button>
                         </CardHeader>
                         <CardContent>
@@ -305,10 +310,10 @@ export default function Home() {
                     {description && (
                     <Card className="animate-in fade-in-0 slide-in-from-bottom-5 duration-700">
                         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-xl font-headline">Deskripsi Produk ({targetMarket})</CardTitle>
-                        <Button variant="ghost" size="icon" onClick={() => handleCopy(description, 'Deskripsi')}>
+                        <CardTitle className="text-xl font-headline">{t('productDescriptionTitle')} ({targetMarketTranslations[targetMarket]})</CardTitle>
+                        <Button variant="ghost" size="icon" onClick={() => handleCopy(description, t('productDescriptionTitle'))}>
                             <Copy className="w-4 h-4" />
-                            <span className="sr-only">Salin Deskripsi</span>
+                            <span className="sr-only">{t('copyDescription')}</span>
                         </Button>
                         </CardHeader>
                         <CardContent>
@@ -324,10 +329,10 @@ export default function Home() {
                 ) : (
                     <Card className="hidden md:block">
                         <CardHeader>
-                            <CardTitle>Hasil Anda</CardTitle>
+                            <CardTitle>{t('resultsTitle')}</CardTitle>
                         </CardHeader>
                         <CardContent>
-                            <p className="text-muted-foreground">Deskripsi dan analisis produk yang Anda hasilkan akan muncul di sini.</p>
+                            <p className="text-muted-foreground">{t('resultsDescription')}</p>
                         </CardContent>
                     </Card>
                 )}
