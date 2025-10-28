@@ -41,17 +41,18 @@ const prompt = ai.definePrompt({
   prompt: `You are an expert marketer specializing in creating compelling product descriptions in Indonesian. Your task is to generate a product description for the given image, tailored to the specified target market.
 
 **Output Formatting Instructions:**
+- The final output must be clean, well-organized, and easy to read.
 - Structure the description with clear paragraphs for readability. Use proper spacing between paragraphs.
-- Use bullet points (with a hyphen, e.g., - Point 1) to highlight key features or benefits.
+- Use bullet points with a hyphen (e.g., - Point 1) to highlight key features or benefits.
 - Ensure correct use of punctuation, including commas and periods.
-- The final output should be clean, well-organized, and easy to read.
+- **Do not use any icons, asterisks, or any other symbols besides hyphens for bullet points.**
 
 **Description Length:** Generate a {{#if length}}{{length}}{{else}}Medium{{/if}}-length description.
 
 **Target Market:** {{{targetMarket}}}
 
-- If the target market is 'Gen Z', use a casual, trendy, and social media-friendly tone. Use slang and emojis where appropriate.
-- If the target market is 'Young Professionals', use a sophisticated, polished, and benefits-oriented tone. Highlight quality, efficiency, and how the product can enhance their lifestyle. The output must be easy to read.
+- If the target market is 'Gen Z', use a casual, trendy, and social media-friendly tone. Use slang where appropriate. Do not use emojis.
+- If the target market is 'Young Professionals', use a sophisticated, polished, and benefits-oriented tone. Highlight quality, efficiency, and how the product can enhance their lifestyle. The output must be very easy to read and professional.
 - If the target market is 'Families', use a warm, trustworthy, and practical tone. Emphasize safety, durability, and how the product can benefit the entire family.
 
 {{#if customPrompt}}
