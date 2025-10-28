@@ -10,6 +10,7 @@ import { useToast } from '@/hooks/use-toast';
 import { generateContent } from './actions';
 import { cn } from '@/lib/utils';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
+import { Separator } from '@/components/ui/separator';
 
 export default function Home() {
   const [imageDataUrl, setImageDataUrl] = useState<string | null>(null);
@@ -132,140 +133,160 @@ export default function Home() {
         </p>
       </div>
 
-      <Card className="max-w-3xl mx-auto mt-8 overflow-hidden shadow-lg">
-        <CardContent className="p-6">
-          {!imagePreviewUrl ? (
-            <div
-              className="relative flex flex-col items-center justify-center w-full h-64 border-2 border-dashed rounded-lg cursor-pointer hover:bg-muted/50 transition-colors overflow-hidden"
-              onClick={triggerFileSelect}
-              onDrop={handleDrop}
-              onDragOver={handleDragOver}
-            >
-              {placeholderImage && (
-                <Image 
-                  src={placeholderImage.imageUrl} 
-                  alt={placeholderImage.description} 
-                  fill 
-                  className="object-cover opacity-10 dark:opacity-5" 
-                  data-ai-hint={placeholderImage.imageHint}
-                />
+      <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
+        {/* Left Column: Upload */}
+        <div className="flex flex-col gap-6">
+          <Card className="overflow-hidden shadow-lg">
+            <CardHeader>
+                <CardTitle>Unggah Gambar Produk</CardTitle>
+            </CardHeader>
+            <CardContent>
+              {!imagePreviewUrl ? (
+                <div
+                  className="relative flex flex-col items-center justify-center w-full h-64 border-2 border-dashed rounded-lg cursor-pointer hover:bg-muted/50 transition-colors overflow-hidden"
+                  onClick={triggerFileSelect}
+                  onDrop={handleDrop}
+                  onDragOver={handleDragOver}
+                >
+                  {placeholderImage && (
+                    <Image 
+                      src={placeholderImage.imageUrl} 
+                      alt={placeholderImage.description} 
+                      fill 
+                      className="object-cover opacity-10 dark:opacity-5" 
+                      data-ai-hint={placeholderImage.imageHint}
+                    />
+                  )}
+                  <div className="relative z-10 flex flex-col items-center text-center">
+                    <UploadCloud className="w-12 h-12 text-muted-foreground" />
+                    <p className="mt-4 text-muted-foreground">
+                      Seret & letakkan gambar di sini, atau <br />
+                      <span className="font-semibold text-primary">klik untuk memilih file</span>
+                    </p>
+                  </div>
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={onFileChange}
+                  />
+                </div>
+              ) : (
+                <div className="relative group">
+                  <Image
+                    src={imagePreviewUrl}
+                    alt="Pratinjau produk"
+                    width={600}
+                    height={400}
+                    className="w-full h-auto object-contain rounded-lg max-h-[50vh]"
+                  />
+                  <Button
+                      variant="destructive"
+                      size="icon"
+                      className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity"
+                      onClick={removeImage}
+                  >
+                      <X className="w-4 h-4" />
+                      <span className="sr-only">Hapus gambar</span>
+                  </Button>
+                </div>
               )}
-              <div className="relative z-10 flex flex-col items-center text-center">
-                <UploadCloud className="w-12 h-12 text-muted-foreground" />
-                <p className="mt-4 text-muted-foreground">
-                  Seret & letakkan gambar di sini, atau <br />
-                  <span className="font-semibold text-primary">klik untuk memilih file</span>
-                </p>
-              </div>
-              <input
-                ref={fileInputRef}
-                type="file"
-                accept="image/*"
-                className="hidden"
-                onChange={onFileChange}
-              />
-            </div>
-          ) : (
-            <div className="relative group">
-              <Image
-                src={imagePreviewUrl}
-                alt="Pratinjau produk"
-                width={600}
-                height={400}
-                className="w-full h-auto object-contain rounded-lg max-h-[50vh]"
-              />
-              <Button
-                  variant="destructive"
-                  size="icon"
-                  className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity"
-                  onClick={removeImage}
-              >
-                  <X className="w-4 h-4" />
-                  <span className="sr-only">Hapus gambar</span>
-              </Button>
-            </div>
-          )}
-        </CardContent>
-      </Card>
-      
-      {error && !isLoading && <p className="text-center text-destructive mt-4">{error}</p>}
-      
-      <div className="max-w-3xl mx-auto mt-6 text-center">
-        <Button onClick={handleGenerate} disabled={!imageDataUrl || isLoading} size="lg" className="font-bold text-lg px-8 py-6">
+            </CardContent>
+          </Card>
+          
+          {error && !isLoading && <p className="text-center text-destructive">{error}</p>}
+          
+          <Button onClick={handleGenerate} disabled={!imageDataUrl || isLoading} size="lg" className="font-bold text-lg px-8 py-6 w-full">
+            {isLoading ? (
+              <>
+                <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                Menghasilkan...
+              </>
+            ) : (
+              'Hasilkan Deskripsi'
+            )}
+          </Button>
+        </div>
+        
+        {/* Right Column: Results */}
+        <div className={cn("grid gap-8", 
+          (!isLoading && !analysis && !description) ? "hidden md:grid" : "grid"
+        )}>
           {isLoading ? (
             <>
-              <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-              Menghasilkan...
+              <Card>
+                <CardHeader>
+                  <CardTitle className="h-6 w-1/3 bg-muted rounded-md animate-pulse" />
+                </CardHeader>
+                <CardContent>
+                  <div className="w-full h-24 bg-muted animate-pulse rounded-md" />
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader>
+                  <CardTitle className="h-6 w-1/3 bg-muted rounded-md animate-pulse" />
+                </CardHeader>
+                <CardContent>
+                  <div className="w-full h-32 bg-muted animate-pulse rounded-md" />
+                </CardContent>
+              </Card>
             </>
           ) : (
-            'Hasilkan Deskripsi'
+            <>
+                {(analysis || description) ? (
+                    <>
+                    {analysis && (
+                    <Card className="animate-in fade-in-0 slide-in-from-bottom-5 duration-500">
+                        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                        <CardTitle className="text-xl font-headline">Analisis Gambar</CardTitle>
+                        <Button variant="ghost" size="icon" onClick={() => handleCopy(analysis, 'Analisis')}>
+                            <Copy className="w-4 h-4" />
+                            <span className="sr-only">Salin Analisis</span>
+                        </Button>
+                        </CardHeader>
+                        <CardContent>
+                        <Textarea
+                            readOnly
+                            value={analysis}
+                            className="h-32 bg-background/50 text-base"
+                        />
+                        </CardContent>
+                    </Card>
+                    )}
+                    
+                    {description && (
+                    <Card className="animate-in fade-in-0 slide-in-from-bottom-5 duration-700">
+                        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                        <CardTitle className="text-xl font-headline">Deskripsi Produk</CardTitle>
+                        <Button variant="ghost" size="icon" onClick={() => handleCopy(description, 'Deskripsi')}>
+                            <Copy className="w-4 h-4" />
+                            <span className="sr-only">Salin Deskripsi</span>
+                        </Button>
+                        </CardHeader>
+                        <CardContent>
+                        <Textarea
+                            readOnly
+                            value={description}
+                            className="h-48 bg-background/50 text-base"
+                        />
+                        </CardContent>
+                    </Card>
+                    )}
+                </>
+                ) : (
+                    <Card className="hidden md:block">
+                        <CardHeader>
+                            <CardTitle>Hasil Anda</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <p className="text-muted-foreground">Deskripsi dan analisis produk yang Anda hasilkan akan muncul di sini.</p>
+                        </CardContent>
+                    </Card>
+                )}
+            </>
           )}
-        </Button>
-      </div>
-      
-      <div className={cn("max-w-3xl mx-auto mt-10 grid gap-8", 
-        (!isLoading && !analysis && !description) && "hidden"
-      )}>
-        {isLoading ? (
-          <>
-            <Card>
-              <CardHeader>
-                <CardTitle className="h-6 w-1/3 bg-muted rounded-md animate-pulse" />
-              </CardHeader>
-              <CardContent>
-                <div className="w-full h-24 bg-muted animate-pulse rounded-md" />
-              </CardContent>
-            </Card>
-            <Card>
-              <CardHeader>
-                <CardTitle className="h-6 w-1/3 bg-muted rounded-md animate-pulse" />
-              </CardHeader>
-              <CardContent>
-                <div className="w-full h-32 bg-muted animate-pulse rounded-md" />
-              </CardContent>
-            </Card>
-          </>
-        ) : (
-          <>
-            {analysis && (
-              <Card className="animate-in fade-in-0 slide-in-from-bottom-5 duration-500">
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-xl font-headline">Analisis Gambar</CardTitle>
-                  <Button variant="ghost" size="icon" onClick={() => handleCopy(analysis, 'Analisis')}>
-                    <Copy className="w-4 h-4" />
-                    <span className="sr-only">Salin Analisis</span>
-                  </Button>
-                </CardHeader>
-                <CardContent>
-                  <Textarea
-                    readOnly
-                    value={analysis}
-                    className="h-32 bg-background/50 text-base"
-                  />
-                </CardContent>
-              </Card>
-            )}
-            
-            {description && (
-              <Card className="animate-in fade-in-0 slide-in-from-bottom-5 duration-700">
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-xl font-headline">Deskripsi Produk</CardTitle>
-                  <Button variant="ghost" size="icon" onClick={() => handleCopy(description, 'Deskripsi')}>
-                    <Copy className="w-4 h-4" />
-                    <span className="sr-only">Salin Deskripsi</span>
-                  </Button>
-                </CardHeader>
-                <CardContent>
-                  <Textarea
-                    readOnly
-                    value={description}
-                    className="h-48 bg-background/50 text-base"
-                  />
-                </CardContent>
-              </Card>
-            )}
-          </>
-        )}
+        </div>
       </div>
     </div>
   );
