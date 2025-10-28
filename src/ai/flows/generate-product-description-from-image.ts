@@ -20,11 +20,12 @@ const GenerateProductDescriptionFromImageInputSchema = z.object({
     .string()
     .optional()
     .describe('A custom prompt to guide the product description generation.'),
+  language: z.string().describe('The target language for the product description.'),
 });
 export type GenerateProductDescriptionFromImageInput = z.infer<typeof GenerateProductDescriptionFromImageInputSchema>;
 
 const GenerateProductDescriptionFromImageOutputSchema = z.object({
-  productDescription: z.string().describe('The generated product description in Indonesian.'),
+  productDescription: z.string().describe('The generated product description in the target language.'),
 });
 export type GenerateProductDescriptionFromImageOutput = z.infer<typeof GenerateProductDescriptionFromImageOutputSchema>;
 
@@ -36,15 +37,15 @@ const prompt = ai.definePrompt({
   name: 'generateProductDescriptionFromImagePrompt',
   input: {schema: GenerateProductDescriptionFromImageInputSchema},
   output: {schema: GenerateProductDescriptionFromImageOutputSchema},
-  prompt: `Anda adalah pemasar ahli yang berspesialisasi dalam membuat deskripsi produk yang menarik dalam bahasa Indonesia. Buat deskripsi produk yang menarik berdasarkan gambar produk yang disediakan. Tekankan fitur dan manfaat utama produk untuk menarik pembeli potensial.
+  prompt: `You are an expert marketer specializing in creating compelling product descriptions. Generate a compelling product description in '{{{language}}}' based on the provided product image. Emphasize the key features and benefits of the product to attract potential buyers.
 
 {{#if customPrompt}}
-Ikuti instruksi tambahan ini: {{{customPrompt}}}
+Follow these additional instructions: {{{customPrompt}}}
 {{/if}}
 
-Gambar Produk: {{media url=photoDataUri}}
+Product Image: {{media url=photoDataUri}}
 
-Deskripsi Produk:`, // Prompt to generate product description in Indonesian.
+Product Description:`,
 });
 
 const generateProductDescriptionFromImageFlow = ai.defineFlow(

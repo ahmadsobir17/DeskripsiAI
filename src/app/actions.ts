@@ -3,7 +3,7 @@
 import { analyzeUploadedImage } from "@/ai/flows/analyze-uploaded-image";
 import { generateProductDescriptionFromImage } from "@/ai/flows/generate-product-description-from-image";
 
-export async function generateContent(photoDataUri: string, customPrompt: string) {
+export async function generateContent(photoDataUri: string, customPrompt: string, language: string) {
   if (!photoDataUri) {
     return { error: "No image data provided." };
   }
@@ -11,7 +11,7 @@ export async function generateContent(photoDataUri: string, customPrompt: string
   try {
     const [analysisResult, descriptionResult] = await Promise.all([
       analyzeUploadedImage({ photoDataUri }),
-      generateProductDescriptionFromImage({ photoDataUri, customPrompt }),
+      generateProductDescriptionFromImage({ photoDataUri, customPrompt, language }),
     ]);
 
     return {
