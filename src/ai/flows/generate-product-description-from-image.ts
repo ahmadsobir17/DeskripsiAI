@@ -16,6 +16,10 @@ const GenerateProductDescriptionFromImageInputSchema = z.object({
     .describe(
       "A photo of a product, as a data URI that must include a MIME type and use Base64 encoding. Expected format: 'data:<mimetype>;base64,<encoded_data>'."
     ),
+  customPrompt: z
+    .string()
+    .optional()
+    .describe('A custom prompt to guide the product description generation.'),
 });
 export type GenerateProductDescriptionFromImageInput = z.infer<typeof GenerateProductDescriptionFromImageInputSchema>;
 
@@ -33,6 +37,10 @@ const prompt = ai.definePrompt({
   input: {schema: GenerateProductDescriptionFromImageInputSchema},
   output: {schema: GenerateProductDescriptionFromImageOutputSchema},
   prompt: `Anda adalah pemasar ahli yang berspesialisasi dalam membuat deskripsi produk yang menarik dalam bahasa Indonesia. Buat deskripsi produk yang menarik berdasarkan gambar produk yang disediakan. Tekankan fitur dan manfaat utama produk untuk menarik pembeli potensial.
+
+{{#if customPrompt}}
+Ikuti instruksi tambahan ini: {{{customPrompt}}}
+{{/if}}
 
 Gambar Produk: {{media url=photoDataUri}}
 

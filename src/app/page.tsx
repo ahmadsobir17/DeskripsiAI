@@ -2,19 +2,19 @@
 
 import { useState, useRef } from 'react';
 import Image from 'next/image';
-import { UploadCloud, Copy, Loader2, X } from 'lucide-react';
+import { UploadCloud, Copy, Loader2, X, Pilcrow } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
 import { generateContent } from './actions';
 import { cn } from '@/lib/utils';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
-import { Separator } from '@/components/ui/separator';
 
 export default function Home() {
   const [imageDataUrl, setImageDataUrl] = useState<string | null>(null);
   const [imagePreviewUrl, setImagePreviewUrl] = useState<string | null>(null);
+  const [customPrompt, setCustomPrompt] = useState<string>('');
   const [analysis, setAnalysis] = useState<string>('');
   const [description, setDescription] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -76,7 +76,7 @@ export default function Home() {
     setAnalysis('');
     setDescription('');
     
-    const result = await generateContent(imageDataUrl);
+    const result = await generateContent(imageDataUrl, customPrompt);
 
     if (result.error) {
       setError(result.error);
@@ -195,6 +195,27 @@ export default function Home() {
             </CardContent>
           </Card>
           
+          <Card>
+            <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                    <Pilcrow className="w-5 h-5" />
+                    Prompt Kustom (Opsional)
+                </CardTitle>
+                <CardDescription>
+                Berikan instruksi spesifik untuk menyesuaikan deskripsi produk yang dihasilkan.
+                </CardDescription>
+            </CardHeader>
+            <CardContent>
+                <Textarea 
+                    value={customPrompt}
+                    onChange={(e) => setCustomPrompt(e.target.value)}
+                    placeholder="Contoh: Fokus pada bahan yang ramah lingkungan dan sebutkan bahwa produk ini buatan tangan."
+                    className="h-24"
+                />
+            </CardContent>
+          </Card>
+
+
           {error && !isLoading && <p className="text-center text-destructive">{error}</p>}
           
           <Button onClick={handleGenerate} disabled={!imageDataUrl || isLoading} size="lg" className="font-bold text-lg px-8 py-6 w-full">
